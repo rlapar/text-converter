@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"os"
 	apipkg "text-converter/internal/api"
+	"text-converter/internal/cfg"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	api := apipkg.NewAPI()
 	err := api.ListenAndServe(":8080")
 	if err != nil {
-		log.Printf("Server failed", err.Error())
+		cfg.Logger.Info("Server failed", err.Error())
 		exitCode = 1
 		return
 	}

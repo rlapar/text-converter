@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/base64"
-	"log"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 	"text-converter/internal/cfg"
@@ -10,7 +10,11 @@ import (
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.RequestURI)
+		cfg.NewLogger()
+		cfg.BindFields(logrus.Fields{
+			"requestUri": r.RequestURI,
+			"requestMethod": r.Method,
+		})
 		next.ServeHTTP(w, r)
 	})
 }
@@ -39,9 +43,14 @@ func authMiddleware(next http.Handler) http.Handler {
 		}
 
 		if pair[0] != config.Username || pair[1] != config.Password {
+			cfg.Logger.WithFields(logrus.Fields{
+				"remoteUser": pair[0],
+			}).Warning("not_authorized")
 			http.Error(w, "Not authorized", 401)
 			return
 		}
+
+		cfg.BindFields(logrus.Fields{"remoteUser": pair[0]})
 
 		next.ServeHTTP(w, r)
 	})
