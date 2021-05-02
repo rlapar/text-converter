@@ -23,6 +23,7 @@ func NewAPI() API {
 	api.router.HandleFunc("/convertPdf", convertPdf.Post).Methods(http.MethodPost)
 
 	//add middlewares
+	api.router.Use(requestIdMiddleware)
 	api.router.Use(loggingMiddleware)
 	api.router.Use(authMiddleware)
 	return api

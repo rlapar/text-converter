@@ -2,18 +2,29 @@ package api
 
 import (
 	"encoding/base64"
+	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 	"text-converter/internal/cfg"
 )
 
+func requestIdMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		config := cfg.GetConfig()
+		config.RequestId = uuid.NewV4().String()
+		next.ServeHTTP(w, r)
+	})
+}
+
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		config := cfg.GetConfig()
 		cfg.NewLogger()
 		cfg.BindFields(logrus.Fields{
 			"requestUri": r.RequestURI,
 			"requestMethod": r.Method,
+			"requestId": config.RequestId,
 		})
 		next.ServeHTTP(w, r)
 	})

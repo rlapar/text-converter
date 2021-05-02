@@ -2,8 +2,10 @@ package converter
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/ledongthuc/pdf"
 	"os"
+	"text-converter/internal/cfg"
 )
 
 type Converter struct {
@@ -11,8 +13,9 @@ type Converter struct {
 }
 
 func (converter *Converter) ConvertPdf2Text(binaryContent []byte) (string, error) {
+	config := cfg.GetConfig()
 	// Create temporary file to read from
-	tmpfilePath := "/tmp/tmpfile.pdf"
+	tmpfilePath := fmt.Sprintf("/tmp/text-converter-%s.pdf", config.RequestId)
 	tmpfile, err := os.Create(tmpfilePath)
 	if err != nil {
 		return "", err
