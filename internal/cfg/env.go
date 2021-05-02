@@ -10,6 +10,7 @@ type Config struct {
 	Environment string 	`env:"ENVIRONMENT" envDefault:"sandbox"`
 	Username	string	`env:"USERNAME" envDefault:"username"`
 	Password	string	`env:"PASSWORD" envDefault:"password"`
+	RequestId 	string
 }
 
 //singleton config
